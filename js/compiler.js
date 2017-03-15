@@ -21,7 +21,7 @@ define( [
   var numRe = /^(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~)$/,
     numsRe = /^(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~)(?:[ \t]+(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~))*$/,
     nameRe = /^\w+$/,
-    attrRe = /^[irc01!\?]+$/,
+    attrRe = /^[irc01!\?xo]+$/,
     directionRe = /^[\+-][xyz]$/,
 
     termOperators = [ "*", "/", "%" ],
@@ -161,7 +161,6 @@ define( [
     }
 
     numbers = rawNumbers.split( /[ \t]+/ );
-
     return numbers;
   };
 
@@ -286,10 +285,19 @@ define( [
   Compiler.prototype.parseChain = function( parser, context ) {
     var coordinates,
       direction = context.get( "chain_direction" ),
-      chainToken = parser.eat( "keyword", "chain" );
-    parser.eat( "spaces" );
+      chainToken = parser.eat( "keyword", "chain" ),
+      autoPosition = true;
 
-    coordinates = this.parseCoordinates( parser, context, [ ":", ",", "eol" ] );
+    // Get information about the last chain
+	previous_chain_coordinates = context.get( "previous_chain_coordinates" );
+	previous_chain_difference = context.get( "previous_chain_difference" );
+	previous_chain_direction = context.get( "previous_chain_direction" );
+
+    if( parser.current.type === "spaces" ) {
+	    parser.eat( "spaces" );
+	    coordinates = this.parseCoordinates( parser, context, [ ":", ",", "eol" ] );
+	    autoPosition = false;
+    }
 
     parser.skip( "spaces" );
     if( parser.current.type === "," ) {
@@ -301,6 +309,52 @@ define( [
         throw new CSError( "INVALID_DIRECTION", chainToken );
       }
     }
+
+    // If no coordinates were specified, decide chain position automatically
+    if( autoPosition === true ) {
+
+    	// Work off of position of last chain if exists, or default to ~ ~ ~
+    	if( previous_chain_coordinates == null ) {
+    		coordinates = ["~","~","~"];
+    	}
+    	else {
+    		coordinates = previous_chain_coordinates;
+    	}
+
+    	// Use last offset if exists, or deicde from direction
+    	if( previous_chain_difference == null ) {
+    		switch(direction){
+    			case "+z":
+    				difference = CT.relativeDirections["-x"];
+	    			break;
+    			case "-x":
+    				difference = CT.relativeDirections["-z"];
+	    			break;
+    			case "-z":
+    				difference = CT.relativeDirections["+x"];
+	    			break;
+    			default:
+    				difference = CT.relativeDirections["+z"];
+    				break;
+    		}
+    	}
+    	else {
+    		difference = previous_chain_difference;
+    	}
+    	
+    	// Add difference to coordinates for this chain
+    	coordinates = CT.numsOp("+", coordinates, difference)
+
+    }
+
+    // Set last chain pos, difference, and direction for next chain to use
+	if ( previous_chain_coordinates != null && direction === previous_chain_direction ) {
+		context.set( "previous_chain_difference", CT.numsOp("-", coordinates, previous_chain_coordinates) );
+	} else {
+		context.set( "previous_chain_difference", null );
+	}
+	context.set( "previous_chain_coordinates", coordinates.slice() );
+	context.set( "previous_chain_direction", direction );
 
     parser.eat( ":" );
     parser.eat( "eol" );
@@ -343,14 +397,12 @@ define( [
 
     defaultToken = parser.eat( "keyword", "default" );
     parser.eat( "spaces" );
-    param = this.parseUntil( parser, context, [ "spaces", "eol" ] );
-    parser.eat( "spaces" );
-    value = this.parseUntil( parser, context, [ "spaces", "eol" ] );
+    value = this.parseUntil(parser, context, ["spaces", "eol"]);
 
-    if( param === "block_attr" && attrRe.test( value ) ) {
+    if( attrRe.test( value ) ) {
       context.set( "block_attr", value );
     }
-    else if( param === "chain_direction" && directionRe.test( value ) ) {
+    else if( directionRe.test( value ) ) {
       context.set( "chain_direction", value );
     }
     else {

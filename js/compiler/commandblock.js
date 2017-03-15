@@ -16,6 +16,7 @@ define( [
     this.type = "chain_command_block";
     this.command = "";
     this.conditional = false;
+    this.output = false;
     this.auto = true;
     this.stats = null;
     this.markers = null;
@@ -29,6 +30,8 @@ define( [
     if( attr.match( /1/ ) ) this.auto = true;
     if( attr.match( /\?/ ) ) this.conditional = true;
     if( attr.match( /!/ ) ) this.conditional = false;
+    if( attr.match( /o/ ) ) this.output = true;
+    if( attr.match( /x/ ) ) this.output = false;
   };
 
   CommandBlock.prototype.getPosition = function() {
@@ -44,8 +47,9 @@ define( [
   CommandBlock.prototype.getDataTag = function() {
     var dataTag = {};
     dataTag.Command = this.command;
-    if( this.auto === true ) dataTag.auto = 1;
-    dataTag.TrackOutput = "0b";
+    if (this.auto === true) dataTag.auto = 1;
+
+    if (this.output === false) dataTag.TrackOutput = "0b";
 
     return CT.serialize( dataTag );
   };
