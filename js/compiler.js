@@ -312,7 +312,6 @@ define( [
 
     // If no coordinates were specified, decide chain position automatically
     if( autoPosition === true ) {
-
     	// Work off of position of last chain if exists, or default to ~ ~ ~
     	if( previous_chain_coordinates == null ) {
     		coordinates = ["~","~","~"];
@@ -321,8 +320,9 @@ define( [
     		coordinates = previous_chain_coordinates;
     	}
 
-    	// Use last offset if exists, or deicde from direction
-    	if( previous_chain_difference == null ) {
+    	// Use last offset if exists and is from chain in same direction, or deicde from direction
+    	if( previous_chain_difference == null || direction !== previous_chain_direction ) {
+			// This chain direction's default offset
     		switch(direction){
     			case "+z":
     				difference = CT.relativeDirections["-x"];
@@ -333,22 +333,44 @@ define( [
     			case "-z":
     				difference = CT.relativeDirections["+x"];
 	    			break;
-    			default:
+    			default: // Applies to +x, +y, -y
     				difference = CT.relativeDirections["+z"];
     				break;
     		}
+  			
+			// Special cases to avoid overwriting previous blocks, if there was a previous direction
+  			if ( previous_chain_direction != null ) {
+	    		switch( previous_chain_direction + " -> " + direction ){
+	    			case "-z -> -x":
+	    			case "+x -> -x":
+	    				difference = CT.relativeDirections["+z"];
+		    			break;
+	    			case "+x -> -z":
+	    			case "+z -> -z":
+	    				difference = CT.relativeDirections["-x"]; 
+		    			break;
+	    			case "+z -> +x":
+	    			case "-x -> +x":
+	    				difference = CT.relativeDirections["-z"];
+		    			break;
+	    			case "-x -> +z":
+	    			case "-z -> +z": 
+	    				difference = CT.relativeDirections["+x"];
+		    			break;
+	    		}
+  			}
     	}
     	else {
     		difference = previous_chain_difference;
     	}
     	
     	// Add difference to coordinates for this chain
-    	coordinates = CT.numsOp("+", coordinates, difference)
+    	coordinates = CT.numsOp("+", coordinates, difference);
 
     }
 
     // Set last chain pos, difference, and direction for next chain to use
-	if ( previous_chain_coordinates != null && direction === previous_chain_direction ) {
+	if ( previous_chain_coordinates != null ) {
 		context.set( "previous_chain_difference", CT.numsOp("-", coordinates, previous_chain_coordinates) );
 	} else {
 		context.set( "previous_chain_difference", null );
