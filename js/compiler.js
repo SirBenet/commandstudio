@@ -295,20 +295,28 @@ define( [
 
     if( parser.current.type === "spaces" ) {
 	    parser.eat( "spaces" );
-	    coordinates = this.parseCoordinates( parser, context, [ ":", ",", "eol" ] );
-	    autoPosition = false;
-    }
+	    // Keep parsing chain arguments until we hit the end
+	    while( parser.current.type !== ":" && parser.current.type !== "eol" ) {
 
-    parser.skip( "spaces" );
-    if( parser.current.type === "," ) {
-      parser.next();
-      parser.skip( "spaces" );
+		    var argument = this.parseUntil( parser, context, [ ":", ",", "eol" ] );
 
-      direction = this.parseUntil( parser, context, [ ":", ",", "eol" ] );
-      if( directionRe.test( direction ) === false ) {
-        throw new CSError( "INVALID_DIRECTION", chainToken );
-      }
-    }
+			if( directionRe.test( argument ) ) {
+	        	direction = argument;
+	      	} 
+	      	else if( numsRe.test( argument ) ) {
+	      		coordParser = new Parser( argument );
+	      		coordinates = this.parseCoordinates( coordParser, context, [ ":", ",", "eol" ] );
+	      		autoPosition = false;
+			}
+			else {
+				throw new CSError( "INVALID_CHAIN_ARGUMENT", chainToken );
+			}
+
+			parser.skip( "spaces" );
+			parser.skip( "," );
+			parser.skip( "spaces" );
+		}
+	}
 
     // If no coordinates were specified, decide chain position automatically
     if( autoPosition === true ) {

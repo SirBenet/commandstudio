@@ -17,6 +17,7 @@ define( function() {
     "INVALID_COORDINATES": "Invalid coordinates",
     "INVALID_MARKER": "Invalid marker",
     "INVALID_DIRECTION": "Invalid direction",
+    "INVALID_CHAIN_ARGUMENT": "Invalid chain direction/coordinates",
     "INVALID_OPERATION": "Invalid operation",
     "DIVISION_BY_ZERO": "Division by zero",
     "TOO_MANY_ARGUMENTS": "Too many arguments on def \"%value\"",
