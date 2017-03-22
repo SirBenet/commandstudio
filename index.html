@@ -38,6 +38,7 @@
   <span class="ui-toolbar-item ui-action" data-command="editor-redo"><i class="fa fa-repeat"></i> Redo</span>
   <div class="ui-toolbar-separator"></div>
   <span class="ui-toolbar-item ui-action" data-command="file-compile"><i class="fa fa-first-order"></i> Compile</span>
+  <span class="ui-toolbar-item ui-action ui-rcon-button" data-command="file-rcon"><i class="fa fa-send-o"></i> RCON send</span>
   <div class="ui-toolbar-right">
     <span class="ui-toolbar-version">CommandStudio v0.2.5-beta</span>
     <span class="ui-toolbar-item ui-action" data-command="app-options"><i class="fa fa-cog"></i> Options</span>
@@ -139,6 +140,23 @@
       <label for="option-resetCommandBlock" class="checkbox-box"></label>
       <label for="option-resetCommandBlock" class="checkbox-label">Auto reset the command block which executes the import</label>
     </div>
+    <div class="form-line">
+      <input type="checkbox" id="option-enableRCON" class="checkbox-input">
+      <label for="option-enableRCON" class="checkbox-box"></label>
+      <label for="option-enableRCON" class="checkbox-label">Enable RCON</label>
+    </div>
+    <div class="form-line">
+      <input type="text" id="option-rconIP" class="input-text ui-rcon-option">
+      <label for="option-rconIP" class="label ui-rcon-option">RCON IP</label>
+	</div>
+    <div class="form-line">
+      <input type="text" id="option-rconPort" class="input-text ui-rcon-option">
+      <label for="option-rconPort" class="label ui-rcon-option">RCON port</label>
+	</div>
+    <div class="form-line">
+      <input type="password" id="option-rconPassword" class="input-text ui-rcon-option">
+      <label for="option-rconPassword" class="label ui-rcon-option">RCON password</label>
+    </div>
     <div class="popin-buttons">
       <button class="button button-main on-click" data-action="save"><i class="fa fa-check"></i> Save</button>
       <button class="button on-click" data-action="close"><i class="fa fa-times"></i> Cancel</button>
@@ -180,6 +198,9 @@
       <ul>
         <li>Updated entity names</li>
         <li>Chain coordinates now optional</li>
+        <li>Added <span class="char">o</span>/<span class="char">x</span> modifiers to turn on/off TrackOutput</li>
+        <li>Added RCON support</li>
+        <li>Updated manual</li>
       </ul>
 
       <div class="changelog-version">v0.2.4</div>

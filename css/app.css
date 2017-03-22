@@ -144,6 +144,10 @@ input, button {
   float:right;
 }
 
+.ui-rcon-button, .ui-rcon-option {
+  display:none;
+}
+
 .ui-toolbar-version {
   float:left;
   padding:15px;

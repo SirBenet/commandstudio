@@ -23,9 +23,19 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
 
     this.options = {
       useOldEntityNames: false,
-      resetCommandBlock: true
+      resetCommandBlock: true,
+      enableRCON: false,
+      rconIP: null,
+      rconPort: null,
+      rconPassword: null
     };
+
     this.loadOptions();
+    if ( this.options.enableRCON === true ){
+      $( ".ui-rcon-button" ).show();
+    } else {
+      $( ".ui-rcon-button" ).hide();
+    }
 
     var projectSave = this.load( "commandstudio-project" );
     if( projectSave !== null ) {
@@ -57,6 +67,14 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
           throw exception;
         }
       }
+    } );
+
+    ui.events.on( "toolbar.file-rcon", function() {
+      //TODO
+      ui.popin.show( "alert", {
+        "title": "RCON support not yet implemented",
+        "text": "All I've done so far is add some UI"
+      } );
     } );
 
     ui.events.on( "toolbar.project-export", function() {
@@ -129,14 +147,46 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
         "action:save": function() {
           app.options.useOldEntityNames = this.$popin.find( "#option-useOldEntityNames" ).prop( "checked" );
           app.options.resetCommandBlock = this.$popin.find( "#option-resetCommandBlock" ).prop( "checked" );
+          app.options.enableRCON = this.$popin.find( "#option-enableRCON" ).prop( "checked" );
+          
+          app.options.rconIP = this.$popin.find( "#option-rconIP" ).val();
+          app.options.rconPort = this.$popin.find( "#option-rconPort" ).val();
+          app.options.rconPassword = this.$popin.find( "#option-rconPassword" ).val();
+
+          // Show/hide GUI button depending on updated setting
+          if ( app.options.enableRCON === true ){
+            $( ".ui-rcon-button" ).show();
+          } else {
+            $( ".ui-rcon-button" ).hide();
+          }
+
           app.saveOptions();
           this.hide();
         }
       } );
 
+      // Show RCON options if already enabled
+      if ( app.options.enableRCON === true ){
+        $( ".ui-rcon-option" ).show();
+      } else {
+        $( ".ui-rcon-option" ).hide();
+      }
+      // Show RCON options when checkbox gets checked
+      ui.popin.$popin.on( "change", "#option-enableRCON", function() {
+          if ( this.checked === true ){
+            $( ".ui-rcon-option" ).show();
+          } else {
+            $( ".ui-rcon-option" ).hide();
+          }
+      });
+
       for( var optionName in app.options ) {
         if( app.options[optionName] === true ) {
           ui.popin.$popin.find( "#option-" + optionName ).prop( "checked", "checked" );
+        }
+
+        if( typeof( app.options[optionName] ) === "string" ) {
+          ui.popin.$popin.find( "#option-" + optionName ).val( app.options[optionName] );
         }
       }
 
