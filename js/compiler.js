@@ -20,9 +20,11 @@ define( [
 
   var numRe = /^(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~)$/,
     numsRe = /^(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~)(?:[ \t]+(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~))*$/,
+    coordsRe = /^(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~)(?:[ \t]+(?:~?[\+-]?(?:\.\d+|\d+\.?\d*)|~)){2}$/,
     nameRe = /^\w+$/,
     attrRe = /^[irc01!\?xo]+$/,
     directionRe = /^[\+-][xyz]$/,
+    wrapRe = /^(?:[\+-]?(?:\d+))$/,
 
     termOperators = [ "*", "/", "%" ],
     exprOperators = [ "+", "-" ];
@@ -287,36 +289,40 @@ define( [
       direction = context.get( "chain_direction" ),
       chainToken = parser.eat( "keyword", "chain" ),
       autoPosition = true;
+      wrapLength = 0;
 
     // Get information about the last chain
-	previous_chain_coordinates = context.get( "previous_chain_coordinates" );
-	previous_chain_difference = context.get( "previous_chain_difference" );
-	previous_chain_direction = context.get( "previous_chain_direction" );
+  	previous_chain_coordinates = context.get( "previous_chain_coordinates" );
+  	previous_chain_difference = context.get( "previous_chain_difference" );
+  	previous_chain_direction = context.get( "previous_chain_direction" );
 
     if( parser.current.type === "spaces" ) {
 	    parser.eat( "spaces" );
 	    // Keep parsing chain arguments until we hit the end
 	    while( parser.current.type !== ":" && parser.current.type !== "eol" ) {
 
-		    var argument = this.parseUntil( parser, context, [ ":", ",", "eol" ] );
+		    var argument = this.parseUntil( parser, context, [ ":", ",", "eol" ] ).trim();
 
-			if( directionRe.test( argument ) ) {
-	        	direction = argument;
-	      	} 
-	      	else if( numsRe.test( argument ) ) {
-	      		coordParser = new Parser( argument );
-	      		coordinates = this.parseCoordinates( coordParser, context, [ ":", ",", "eol" ] );
-	      		autoPosition = false;
-			}
-			else {
-				throw new CSError( "INVALID_CHAIN_ARGUMENT", chainToken );
-			}
+  			if( directionRe.test( argument ) ) {
+        	direction = argument;
+      	} 
+      	else if( coordsRe.test( argument ) ) {
+      		coordParser = new Parser( argument );
+      		coordinates = this.parseCoordinates( coordParser, context, [ ":", ",", "eol" ] );
+      		autoPosition = false;
+  			}
+        else if( wrapRe.test( argument ) ) {
+          wrapLength = parseInt(argument);
+        }
+  			else {
+  				throw new CSError( "INVALID_CHAIN_ARGUMENT", chainToken );
+  			}
 
-			parser.skip( "spaces" );
-			parser.skip( "," );
-			parser.skip( "spaces" );
-		}
-	}
+  			parser.skip( "spaces" );
+  			parser.skip( "," );
+  			parser.skip( "spaces" );
+		  } 
+	 }
 
     // If no coordinates were specified, decide chain position automatically
     if( autoPosition === true ) {
@@ -378,18 +384,18 @@ define( [
     }
 
     // Set last chain pos, difference, and direction for next chain to use
-	if ( previous_chain_coordinates != null ) {
-		context.set( "previous_chain_difference", CT.numsOp("-", coordinates, previous_chain_coordinates) );
-	} else {
-		context.set( "previous_chain_difference", null );
-	}
-	context.set( "previous_chain_coordinates", coordinates.slice() );
-	context.set( "previous_chain_direction", direction );
+  	if ( previous_chain_coordinates != null ) {
+  		context.set( "previous_chain_difference", CT.numsOp("-", coordinates, previous_chain_coordinates) );
+  	} else {
+  		context.set( "previous_chain_difference", null );
+  	}
+  	context.set( "previous_chain_coordinates", coordinates.slice() );
+  	context.set( "previous_chain_direction", direction );
 
     parser.eat( ":" );
     parser.eat( "eol" );
 
-    var chain = new Chain( coordinates, direction ),
+    var chain = new Chain( coordinates, direction, wrapLength ),
       chainContext = context.push(),
       chainScope = context.get( "scope" ).push();
 
