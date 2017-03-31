@@ -25,24 +25,35 @@ define( [
     // Get position based on last block position, if it exists
     if ( typeof this.getLastBlock() != 'undefined' ) {
 
-      // Wrap if needed
+      // Wrap if needed, this block redirects chain
       if ( ( this.index + 1 ) % this.wrapLength == 0 ){
-        this.wrap();
+        var turningDirection = CT.turningDirections[ this.direction ];
+        this.currentBlock.direction = turningDirection;
+      return CT.numsOp( "+", this.getLastBlock().position, CT.relativeDirections[ this.direction ] );
+      }
+      // First block in new wrapped chain direction
+      else if ( ( this.index + 1 ) % this.wrapLength == 1 ){
+        var oppositeDirection = CT.oppositeDirections[ this.direction ];
+        var turningDirection = CT.turningDirections[ this.direction ];
+        this.currentBlock.direction = oppositeDirection;
+        this.direction = oppositeDirection;
+        return CT.numsOp( "+", this.getLastBlock().position, CT.relativeDirections[ turningDirection ] );
       }
 
       return CT.numsOp( "+", this.getLastBlock().position, CT.relativeDirections[ this.direction ] );
 
     } else {
+
       return this.position;
+
     }
 
   };
 
   Chain.prototype.resetBlock = function() {
-    var position = this.currentPosition();
     this.currentBlock = new CommandBlock();
-    this.currentBlock.position = position;
     this.currentBlock.direction = this.direction;
+    this.currentBlock.position = this.currentPosition();
   };
 
   Chain.prototype.feed = function( str ) {
@@ -56,6 +67,26 @@ define( [
   };
 
   Chain.prototype.push = function( commandBlock ) {
+
+    // If wrapping on a conditional
+    if ( commandBlock.conditional && ( ( this.index + 1 ) % this.wrapLength == 0 || ( this.index + 1 ) % this.wrapLength == 1 ) ){
+
+      if ( ( this.index + 1 ) % this.wrapLength == 1 ) {
+        this.direction = CT.oppositeDirections[ this.direction ];
+      }
+
+      this.resetBlock();     
+      this.currentBlock.command = "testforblock " + CT.numsOp("-", this.getLastBlock().position, this.currentBlock.position ).join( " " ) + " " + this.getLastBlock().type + " {SuccessCount:0}";
+      this.push( this.currentBlock );
+
+      this.currentBlock.command = "testforblock " + CT.numsOp("-", this.getLastBlock().position, this.currentBlock.position ).join( " " ) + " " + this.getLastBlock().type + " {SuccessCount:0}";
+      this.push( this.currentBlock );
+
+      commandBlock.position = this.currentPosition();
+      commandBlock.direction = this.direction;
+      this.currentBlock = commandBlock;
+    }
+
     this.commandBlocks.push( commandBlock );
     this.next();
   };
@@ -69,42 +100,10 @@ define( [
     return this.commandBlocks[ this.index - 1 ];
   };
 
-  Chain.prototype.wrap = function() {
+  /*Chain.prototype.wrap = function() {
     console.log("thats a wrap");
 
-    var turningDirection;
-    var oppositeDirection;
 
-    switch(this.direction){
-      case "+x":
-        turningDirection = "+y";
-        oppositeDirection = "-x";
-        break;
-      case "+z":
-        turningDirection = "+y";
-        oppositeDirection = "-z";
-        break;
-      case "-x":
-        turningDirection = "+y";
-        oppositeDirection = "+x";
-        break;
-      case "-z":
-        turningDirection = "+y";
-        oppositeDirection = "+z";
-        break;
-      case "+y":
-        turningDirection = "+x";
-        oppositeDirection = "-y";
-        break;
-      case "-y":
-        turningDirection = "+x";
-        oppositeDirection = "+y";
-        break;
-      default:
-        turningDirection = "+x";
-        oppositeDirection = "-y";
-        break;
-    }
 
     var wrapBlockA = new CommandBlock();
     wrapBlockA.position = CT.numsOp( "+", this.getLastBlock().position, CT.relativeDirections[ this.direction ] );
@@ -122,7 +121,7 @@ define( [
 
     this.direction = oppositeDirection;
 
-  };
+  };*/
 
   return Chain;
 

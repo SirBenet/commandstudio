@@ -10,6 +10,24 @@ define( function() {
     "+z": [ 0, 0, 1 ]
   };
 
+  CT.oppositeDirections = {
+    "-x": "+x",
+    "+x": "-x",
+    "-y": "+y",
+    "+y": "-y",
+    "-z": "+z",
+    "+z": "-z"
+  };
+
+  CT.turningDirections = {
+    "-x": "+y",
+    "+x": "+y",
+    "-y": "+x",
+    "+y": "+x",
+    "-z": "+y",
+    "+z": "+y"
+  };
+
   CT.entityNames = {
     "current": {
       "falling_block": "falling_block",
