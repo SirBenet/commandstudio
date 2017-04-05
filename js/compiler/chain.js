@@ -100,29 +100,6 @@ define( [
     return this.commandBlocks[ this.index - 1 ];
   };
 
-  /*Chain.prototype.wrap = function() {
-    console.log("thats a wrap");
-
-
-
-    var wrapBlockA = new CommandBlock();
-    wrapBlockA.position = CT.numsOp( "+", this.getLastBlock().position, CT.relativeDirections[ this.direction ] );
-    wrapBlockA.direction = turningDirection;
-    wrapBlockA.command = "wrap block A";
-    this.commandBlocks.push( wrapBlockA );
-    this.index++;
-
-    var wrapBlockB = new CommandBlock();
-    wrapBlockB.position = CT.numsOp( "+", this.getLastBlock().position, CT.relativeDirections[ turningDirection ] );
-    wrapBlockB.direction = oppositeDirection;
-    wrapBlockB.command = "wrap block B";
-    this.commandBlocks.push( wrapBlockB );
-    this.index++;
-
-    this.direction = oppositeDirection;
-
-  };*/
-
   return Chain;
 
 } );

@@ -99,8 +99,10 @@ require( [
 
     <div class="menu-section">
       <a class="menu-link" href="#reference"><i class="fa fa-angle-down"></i> Reference</a>
-      <a class="menu-sublink" href="#command-block-attributes">Command block attributes</a>
-      <a class="menu-sublink" href="#orienting-chains">Orienting chains</a>
+      <a class="menu-sublink" href="#chain-arguments">Chain arguments</a>
+      <a class="menu-sublink" href="#positioning-chains"> - Position</a>
+      <a class="menu-sublink" href="#orienting-chains"> - Orientation</a>
+      <a class="menu-sublink" href="#wrapping-chains"> - Wrapping length</a>
       <a class="menu-sublink" href="#commands-on-multiple-lines">Commands on multiple lines</a>
       <a class="menu-sublink" href="#math-operations">Math operations</a>
       <a class="menu-sublink" href="#variables">Variables</a>
@@ -169,8 +171,7 @@ require( [
 <p>
   CommandStudio also can generate command blocks. The <span class="char cm-header">chain</span>
   keyword is used to specify to the compiler that the following lines represent a chain
-  of command blocks. This chain will be placed at the position specified with
-  its declaration.<br>
+  of command blocks. <br>
   Each line of a chain section represents a command block.
 </p>
 
@@ -180,7 +181,7 @@ require( [
   <div class="example-code">
     <div class="example-title">Code</div>
     <div class="example-content code">
-      chain ~2 ~ ~:
+      chain:
         say hello
         say world
         summon Zombie ~2 ~-3 ~
@@ -212,13 +213,13 @@ require( [
     <th>Effect</th>
   </tr>
   <tr>
-    <td><span class="char cm-quote">i</span></td> <td><b class="b-i"></b> Impulse command block</td>
+    <td><span class="char cm-quote">i</span></td> <td><b class="b-i"></b> Impulse</td>
   </tr>
   <tr>
-    <td><span class="char cm-quote">r</span></td> <td><b class="b-r"></b> Repeating command block</td>
+    <td><span class="char cm-quote">r</span></td> <td><b class="b-r"></b> Repeating</td>
   </tr>
   <tr>
-    <td><span class="char cm-quote">c</span></td> <td><b class="b-c"></b> Chain command block</td>
+    <td><span class="char cm-quote">c</span></td> <td><b class="b-c"></b> Chain</td>
   </tr>
   <tr>
     <td><span class="char cm-quote">0</span></td> <td><b class="b-0"></b> Needs redstone</td>
@@ -227,10 +228,16 @@ require( [
     <td><span class="char cm-quote">1</span></td> <td><b class="b-1"></b> Always active</td>
   </tr>
   <tr>
-    <td><span class="char cm-quote">?</span></td> <td><b class="b-ic"></b> Conditionnal</td>
+    <td><span class="char cm-quote">?</span></td> <td><b class="b-cond"></b> Conditional</td>
   </tr>
   <tr>
-    <td><span class="char cm-quote">!</span></td> <td><b class="b-i"></b> Not unconditionnal</td>
+    <td><span class="char cm-quote">!</span></td> <td><b class="b-uncond"></b> Unconditional</td>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">o</span></td> <td><b class="b-o"></b> Track output on</td>
+  </tr>
+  <tr>
+    <td><span class="char cm-quote">x</span></td> <td><b class="b-x"></b> Track output off</td>
   </tr>
 </table>
 
@@ -240,7 +247,7 @@ require( [
   <div class="example-code">
     <div class="example-title">Code</div>
     <div class="example-content code">
-      chain ~2 ~ ~:
+      chain:
         i0:say I'm an impulse command block and I need redstone
         ?:say I'm a chain command block and I'm conditional
         r:say I'm a repeating command block and I'm always active
@@ -254,14 +261,48 @@ require( [
   </div>
 </div>
 
-<h2 id="orienting-chains">Orienting chains</h2>
+<h2 id="chain-arguments">Chain arguments</h2>
+
+<p>
+  After the <span class="char cm-header">chain</span> keyword, chain arguments can be added, separated by commas. These are all optional and can be specified in any order.
+</p>
+
+<h3 id="positioning-chains">Position</h2>
+
+<p>
+  This chain argument forces the start of a chain to be placed at certain coordinates. 
+  Relative coordinates are relative to the summoner command block.
+</p>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      chain:
+        say automatic
+        say position
+
+      chain ~3 ~ ~:
+        say relative
+        say position
+
+      chain 0 10 0:
+        say absolute
+        say position
+    </div>
+    <div class="example-title">Demo</div>
+    <div class="example-content">
+      <div class="clip"><video src="clips/chain-position.webm" loop></video></div>
+    </div>
+  </div>
+</div>
+
+<h3 id="orienting-chains">Orientation</h2>
 
 <p>
   A command block chain will be orientated in the direction that follows its position.
   If no direction is specified, the command block chain will be vertical (<span class="char">+y</span>).
 </p>
-
-<h3>Example</h3>
 
 <div class="example">
   <div class="example-code">
@@ -278,6 +319,36 @@ require( [
     <div class="example-title">Demo</div>
     <div class="example-content">
       <div class="clip"><video src="clips/chain-orientation.webm" loop></video></div>
+    </div>
+  </div>
+</div>
+
+<h3 id="wrapping-chains">Wrapping length</h2>
+
+<p>
+  This chain argument will "wrap" a command chain after a certain length.
+  Conditional blocks are automatically handled when wrapping.
+</p>
+
+<div class="example">
+  <div class="example-code">
+    <div class="example-title">Code</div>
+    <div class="example-content code">
+      chain +x, 6:
+        say One
+        say Two
+        say Three
+        say Four
+        say Five
+        say Six
+        say Seven
+        say Eight
+        say Nine
+        say Ten
+    </div>
+    <div class="example-title">Result</div>
+    <div class="example-content">
+      <img src="img/chain-wrapping.png">
     </div>
   </div>
 </div>

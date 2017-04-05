@@ -334,8 +334,16 @@ b:hover:after {
 .b-rc:after { content:"Conditional Repeating Command Block"; }
 .b-0 { background-image:url(../img/blocks/redstone-lamp-off.png); }
 .b-0:after { content:"Needs redstone"; }
-.b-1 { background-image:url(../img/blocks/redstone-lamp-on.png); }
+.b-1 { background-image:url(../img/blocks/glowstone.png); }
 .b-1:after { content:"Always active"; }
+.b-o { background-image:url(../img/blocks/track-output-on.png); }
+.b-o:after { content:"Track output on"; }
+.b-x { background-image:url(../img/blocks/track-output-off.png); }
+.b-x:after { content:"Track output off"; }
+.b-cond { background-image:url(../img/blocks/conditional.png); }
+.b-cond:after { content:"Conditional"; }
+.b-uncond { background-image:url(../img/blocks/unconditional.png); }
+.b-uncond:after { content:"Unconditional"; }
 
 /* Specific */
 
