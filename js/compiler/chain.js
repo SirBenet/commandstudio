@@ -69,7 +69,7 @@ define( [
   Chain.prototype.push = function( commandBlock ) {
 
     // If wrapping on a conditional
-    if ( commandBlock.conditional && ( ( this.index + 1 ) % this.wrapLength == 0 || ( this.index + 1 ) % this.wrapLength == 1 ) ){
+    if ( this.index > 0 && ( commandBlock.conditional && ( ( this.index + 1 ) % this.wrapLength == 0 || ( this.index + 1 ) % this.wrapLength == 1 ) ) ){
 
       if ( ( this.index + 1 ) % this.wrapLength == 1 ) {
         this.direction = CT.oppositeDirections[ this.direction ];
