@@ -287,16 +287,23 @@ input, button {
 }
 
 .ui-output {
+  flex-grow: 1;
+  margin: auto;
   padding:8px;
   color:#aaa;
-  position:absolute;
-  left:0;
-  bottom:0;
   height:100px;
-  width:100%;
+  width:100px;
   resize:none;
   font-family:monospace;
   background-color:#323232;
+}
+
+.ui-output-container {
+  display: flex;
+  position:absolute;
+  height:100px;
+  bottom:0;
+  width:100%;
 }
 
 .ui-fileInput {

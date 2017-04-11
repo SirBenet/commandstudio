@@ -15,6 +15,7 @@ define( [
     this.$fileInput = $( ".ui-fileInput" );
     this.$editor = $( ".ui-editor" );
     this.$output = $( ".ui-output" );
+    this.$outputContainer = $( ".ui-output-container" );
     this.editor = CodeMirror( this.$editor.get( 0 ), {
       mode: "commander",
       theme: "lesser-dark",
@@ -255,7 +256,23 @@ define( [
     },
 
     setOutput: function( output ) {
-      this.$output.val( output );
+      // Remove all previous extra windows
+      for ( var i = 1; i < this.$output.length; i++ ){
+        this.$output[i].remove();
+      }
+      this.$output = $( ".ui-output" );
+
+      // If string just set remaining box. Otherwise (multiple outputs) add more boxes
+      if ( typeof( output ) === "string" ){
+        this.$output.val( output );
+      } else {
+        this.$output.val( output[0] );
+        for ( var i = 1; i < output.length; i++ ){
+          $( ".ui-output:first" ).clone().appendTo( ".ui-output-container" );
+          this.$output = $( ".ui-output" );
+          this.$output[i].value = output[i];
+        }
+      }
     },
 
     selectOutput: function() {

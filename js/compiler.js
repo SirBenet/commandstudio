@@ -54,13 +54,9 @@ define( [
 
     this.parseFile( fileName, context );
 
-    var compiledCommand = this.compileCommands( commandSet.values );
+    var compiledCommands = this.compileCommands( commandSet.values );
 
-    if( compiledCommand > 32500 ) {
-      throw new CSError( "TOO_LONG", null, compiledCommand.length );
-    }
-
-    return compiledCommand;
+    return compiledCommands;
   };
 
   Compiler.prototype.compareIndentation = function( parser, context ) {
@@ -984,6 +980,8 @@ define( [
     var entityNames = CT.entityNames[ this.options.useOldEntityNames === false ? "current" : "old" ],
       commands = [],
       minecarts = [],
+      compiledCommands = [],
+      numCommandsRequired = 1,
       i, l;
 
     for( i = 0, l = input.length ; i < l ; i++ ) {
@@ -999,14 +997,41 @@ define( [
       throw new CSError( "NO_COMMAND" );
     }
 
-    if( this.options.resetCommandBlock === true ) {
-      commands.push( "blockdata ~ ~-3 ~ {Command:,auto:0}" );
-    }
-
-    commands.push( "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]}" );
-
     for( i = 0, l = commands.length ; i < l ; i++ ) {
       minecarts.push( { id: entityNames["commandblock_minecart"], Command: commands[i] } );
+    }
+
+    do {
+      var succeeded = true,
+          summonCommands = [];
+      
+      segmentedMinecarts = this.segmentArray( minecarts, numCommandsRequired )
+
+      for (var i = 0; i < segmentedMinecarts.length; i++){
+         var compiledCommand = this.commandFromMinecarts( segmentedMinecarts[i] );
+
+         if( compiledCommand.length <= 32500 ) {
+            summonCommands.push(compiledCommand);
+         } else {
+            succeeded = false;
+         }
+
+      }
+
+      numCommandsRequired++;
+
+    } while ( succeeded === false );
+
+    return summonCommands;
+  };
+
+  Compiler.prototype.commandFromMinecarts = function( minecarts ) {
+    var entityNames = CT.entityNames[ this.options.useOldEntityNames === false ? "current" : "old" ];
+
+    minecarts.push( { id: entityNames["commandblock_minecart"], Command: "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]}" } );
+
+    if( this.options.resetCommandBlock === true ) {
+      minecarts.unshift( { id: entityNames["commandblock_minecart"], Command: "blockdata ~ ~-3 ~ {Command:,auto:0}" } );
     }
 
     var root = {
@@ -1026,9 +1051,24 @@ define( [
       } ]
     };
 
-    var summonCommand = "summon " + entityNames["falling_block"] + " ~ ~.6 ~ " + CT.serialize( root );
+    return "summon " + entityNames["falling_block"] + " ~ ~.6 ~ " + CT.serialize( root );
+  };
 
-    return summonCommand;
+  Compiler.prototype.segmentArray = function( array, segments ) {
+    
+    if ( segments <= 1 ) {
+      return [array];
+    }
+
+    var consumeArray = array.slice(0),
+        segmentedArray = [],
+        segmentSize = Math.ceil( array.length / segments );
+
+    while(consumeArray.length) {
+      segmentedArray.push(consumeArray.splice(0, segmentSize));
+    }
+
+    return segmentedArray;
   };
 
   return Compiler;

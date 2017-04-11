@@ -46,8 +46,8 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
     ui.events.on( "toolbar.file-compile", function() {
       compiler.setFiles( ui.getFiles() );
       try {
-        var command = compiler.compile( ui.selectedFile, app.options );
-        ui.setOutput( command );
+        var commands = compiler.compile( ui.selectedFile, app.options );
+        ui.setOutput( commands );
         ui.selectOutput();
       } catch( exception ) {
         if( exception.name === "CSError" ) {

@@ -60,7 +60,9 @@
   <div class="ui-editor"></div>
 </div>
 
-<textarea id="output" rows="10" class="ui-output"></textarea>
+<div class="ui-output-container">
+  <textarea id="output" rows="10" class="ui-output"></textarea>
+</div>
 
 <div class="popin-container">
   <div class="popin"></div>
@@ -178,10 +180,11 @@
 
       <div class="changelog-version">v0.2.5</div>
       <ul>
-        <li>Updated entity names</li>
-        <li>Chain coordinates now optional</li>
-        <li>Added chain wrapping</li>
+        <li>Results over 32500 characters will be split</li>
+        <li>Added chain wrap length argument (see manual)</li>
         <li>Added <span class="char">x</span>/<span class="char">o</span> modifiers to control TrackOutput</li>
+        <li>Chain coordinates are now optional</li>
+        <li>Updated entity names</li>
       </ul>
 
       <div class="changelog-version">v0.2.4</div>
