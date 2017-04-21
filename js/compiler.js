@@ -1028,10 +1028,10 @@ define( [
   Compiler.prototype.commandFromMinecarts = function( minecarts ) {
     var entityNames = CT.entityNames[ this.options.useOldEntityNames === false ? "current" : "old" ];
 
-    minecarts.push( { id: entityNames["commandblock_minecart"], Command: "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]}" } );
+    minecarts.push( { id: entityNames["commandblock_minecart"], Command: "setblock ~ ~-1 ~ command_block 0 1 {auto:1,Command:\"kill @e[type=" + entityNames["commandblock_minecart"] + ",r=1]\"}" } );
 
     if( this.options.resetCommandBlock === true ) {
-      minecarts.unshift( { id: entityNames["commandblock_minecart"], Command: "blockdata ~ ~-3 ~ {Command:,auto:0}" } );
+      minecarts.unshift( { id: entityNames["commandblock_minecart"], Command: "blockdata ~ ~-3 ~ {Command:\"\",auto:0}" } );
     }
 
     var root = {
