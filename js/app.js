@@ -59,6 +59,29 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
       }
     } );
 
+    ui.events.on( "toolbar.file-advance", function() {
+      compiler.setFiles( ui.getFiles() );
+      try {
+        var commands = [].concat(compiler.compile( ui.selectedFile, app.options ));
+        var file = {"criteria": {"c": {"trigger": "minecraft:location"}},"rewards": {"commands": commands}}
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(file)));
+        element.setAttribute('download', "installer-" + (Math.random() +1).toString(36).substr(2, 5) + ".json");
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        ui.setOutput( "1. Navigate to data/advancements for your world file\n2. Create a folder (any name)\n3. Drag-drop the installer file in there\n4. Press F3+T in world to load\nThen, only 3 & 4 must be repeated for next compile" );
+      } catch( exception ) {
+        if( exception.name === "CSError" ) {
+          ui.setOutput( exception.toString() );
+        }
+        else {
+          throw exception;
+        }
+      }
+    } );
+
     ui.events.on( "toolbar.project-export", function() {
       var project = {
           version: "0.1",
