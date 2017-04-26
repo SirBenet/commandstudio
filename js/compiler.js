@@ -997,6 +997,10 @@ define( [
       throw new CSError( "NO_COMMAND" );
     }
 
+    if( this.options.combineCommandsIntoSummon === false ) {
+      return commands 
+    }
+
     for( i = 0, l = commands.length ; i < l ; i++ ) {
       minecarts.push( { id: entityNames["commandblock_minecart"], Command: commands[i] } );
     }

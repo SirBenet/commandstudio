@@ -46,6 +46,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
     ui.events.on( "toolbar.file-compile", function() {
       compiler.setFiles( ui.getFiles() );
       try {
+        app.options.combineCommandsIntoSummon = true;
         var commands = compiler.compile( ui.selectedFile, app.options );
         ui.setOutput( commands );
         ui.selectOutput();
@@ -62,6 +63,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
     ui.events.on( "toolbar.file-advance", function() {
       compiler.setFiles( ui.getFiles() );
       try {
+        app.options.combineCommandsIntoSummon = false;
         var commands = [].concat(compiler.compile( ui.selectedFile, app.options ));
         var file = {"criteria": {"c": {"trigger": "minecraft:location"}},"rewards": {"commands": commands}}
         var element = document.createElement('a');
