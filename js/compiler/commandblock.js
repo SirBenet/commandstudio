@@ -32,6 +32,8 @@ define( [
     if( attr.match( /!/ ) ) this.conditional = false;
     if( attr.match( /o/ ) ) this.output = true;
     if( attr.match( /x/ ) ) this.output = false;
+    if( attr.match( /m/ ) ) this.multirun = true;
+    if( attr.match( /s/ ) ) this.multirun = false;
   };
 
   CommandBlock.prototype.getPosition = function() {
@@ -50,6 +52,8 @@ define( [
     if (this.auto === true) dataTag.auto = 1;
 
     if (this.output === false) dataTag.TrackOutput = "0b";
+
+    if (this.multirun === true) dataTag.UpdateLastExecution = "0b";
 
     return CT.serialize( dataTag );
   };

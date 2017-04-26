@@ -457,7 +457,7 @@ define( [
     }
 
     var line = fullLine.substr( 0, cur.ch ),
-      ignore = line.match( /^\s*(?:[irc01!\?]+:)?\/?/ );
+      ignore = line.match( /^\s*(?:[irc01!\?xoms]+:)?\/?/ );
 
     line = line.substr( ignore[0].length );
     var items = line.split( /\s+/ );

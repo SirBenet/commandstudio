@@ -340,6 +340,10 @@ b:hover:after {
 .b-o:after { content:"Track output on"; }
 .b-x { background-image:url(../img/blocks/track-output-off.png); }
 .b-x:after { content:"Track output off"; }
+.b-m { background-image:url(../img/blocks/multi-run.png); }
+.b-m:after { content:"Multiple runs"; }
+.b-s { background-image:url(../img/blocks/single-run.png); }
+.b-s:after { content:"Single run"; }
 .b-cond { background-image:url(../img/blocks/conditional.png); }
 .b-cond:after { content:"Conditional"; }
 .b-uncond { background-image:url(../img/blocks/unconditional.png); }
