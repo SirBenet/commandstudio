@@ -23,7 +23,8 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
 
     this.options = {
       useOldEntityNames: false,
-      resetCommandBlock: true
+      resetCommandBlock: true,
+      autoRunAdvancements: true
     };
     this.loadOptions();
 
@@ -64,11 +65,17 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
       compiler.setFiles( ui.getFiles() );
       try {
         app.options.combineCommandsIntoSummon = false;
+        if( app.options.autoRunAdvancements ){
+          var file = {"criteria": {"c": {"trigger": "minecraft:location"}},"rewards": {"commands": commands}}
+          var fileName = "installer-" + (Math.random() +1).toString(36).substr(2, 5) + ".json"
+        } else {
+          var file = {"criteria": {"c": {"trigger": "minecraft:impossible"}},"rewards": {"commands": commands}}
+          var fileName = ui.selectedFile + ".json"
+        }
         var commands = [].concat(compiler.compile( ui.selectedFile, app.options ));
-        var file = {"criteria": {"c": {"trigger": "minecraft:location"}},"rewards": {"commands": commands}}
         var element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(file)));
-        element.setAttribute('download', "installer-" + (Math.random() +1).toString(36).substr(2, 5) + ".json");
+        element.setAttribute('download', fileName);
         element.style.display = 'none';
         document.body.appendChild(element);
         element.click();
@@ -154,6 +161,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
         "action:save": function() {
           app.options.useOldEntityNames = this.$popin.find( "#option-useOldEntityNames" ).prop( "checked" );
           app.options.resetCommandBlock = this.$popin.find( "#option-resetCommandBlock" ).prop( "checked" );
+          app.options.autoRunAdvancements = this.$popin.find( "#option-autoRunAdvancements" ).prop( "checked" );
           app.saveOptions();
           this.hide();
         }
