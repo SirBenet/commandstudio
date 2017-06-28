@@ -24,7 +24,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
     this.options = {
       useOldEntityNames: false,
       resetCommandBlock: true,
-      autoRunAdvancements: true
+      //autoRunAdvancements: false
     };
     this.loadOptions();
 
@@ -61,6 +61,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
       }
     } );
 
+    /*
     ui.events.on( "toolbar.file-advance", function() {
       compiler.setFiles( ui.getFiles() );
       try {
@@ -93,6 +94,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
         }
       }
     } );
+    */
 
     ui.events.on( "toolbar.project-export", function() {
       var project = {
@@ -164,7 +166,7 @@ define( [ "ui", "compiler" ], function( UI, Compiler ) {
         "action:save": function() {
           app.options.useOldEntityNames = this.$popin.find( "#option-useOldEntityNames" ).prop( "checked" );
           app.options.resetCommandBlock = this.$popin.find( "#option-resetCommandBlock" ).prop( "checked" );
-          app.options.autoRunAdvancements = this.$popin.find( "#option-autoRunAdvancements" ).prop( "checked" );
+          //app.options.autoRunAdvancements = this.$popin.find( "#option-autoRunAdvancements" ).prop( "checked" );
           app.saveOptions();
           this.hide();
         }
